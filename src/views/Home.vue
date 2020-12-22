@@ -19,29 +19,53 @@
             </template>
         </a-page-header>
         <a-drawer
-                title="Basic Drawer"
                 placement="left"
                 :closable="false"
                 :visible="visible"
                 :after-visible-change="afterVisibleChange"
-                @close="onClose"
-        >
-            <p>Some contents...</p>
-            <p>Some contents...</p>
-            <p>Some contents...</p>
+                @close="onClose">
+            <template slot="title">
+                <div>
+                    <span>Website Record</span>
+                    <a-button size="small" style="float: right" icon="setting"/>
+                </div>
+            </template>
+            <a-menu>
+                <a-menu-item v-for="(item, i) in websiteList"
+                             :key="i">
+                    <span @click="openWebsite(item.websiteUrl, item.openTarget)">
+                        <a-icon :type="item.websiteIcon"/>
+                        {{item.websiteName}}
+                    </span>
+                    <a-button class="delBtn" size="small" style="float: right;margin-right: 0px" icon="setting"/>
+                </a-menu-item>
+            </a-menu>
         </a-drawer>
     </div>
 </template>
 
 <script>
+    import {websiteRecordList} from "@request/api";
+
     export default {
         name: "Home",
         data() {
             return {
-                visible: false
+                visible: false,
+                websiteList: []
             }
         },
         methods: {
+            getWebsites() {
+                websiteRecordList().then(res => {
+                    if (res.isSuccess) {
+                        this.websiteList = res.data
+                    }
+                })
+            },
+            openWebsite(url, target) {
+                window.open(url, target)
+            },
             afterVisibleChange(val) {
                 console.log('visible', val);
             },
@@ -51,10 +75,15 @@
             onClose() {
                 this.visible = false;
             }
+        },
+        created() {
+            this.getWebsites();
         }
     }
 </script>
 
 <style scoped>
-
+    .ant-menu-vertical {
+        border-right: none;
+    }
 </style>

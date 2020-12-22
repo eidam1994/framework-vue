@@ -10,6 +10,7 @@ module.exports = {
             .set('@js', resolve('src/assets/js'))
             .set('@components', resolve('src/components'))
             .set('@views', resolve('src/views'))
+            .set('@request', resolve('src/request'))
     },
     devServer: {
         proxy: {
