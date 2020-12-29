@@ -1,20 +1,14 @@
 <template>
     <div>
-        <a-page-header @back="showDrawer" title="Title"
-                       sub-title="This is a subtitle"
+        <a-page-header @back="showDrawer"
                        style="border: 1px solid rgb(235, 237, 240)">
             <template slot="backIcon">
                 <a-icon type="pic-left"/>
             </template>
             <template slot="extra">
-                <a-button key="3">
-                    Operation
-                </a-button>
-                <a-button key="2">
-                    Operation
-                </a-button>
                 <a-button type="link" icon="user" v-show="!isLogged" @click="loginVisible = !loginVisible"/>
                 <a-button type="link" icon="logout" v-show="isLogged" @click="logout"/>
+                <a-button type="link" icon="appstore"/>
             </template>
         </a-page-header>
         <a-drawer
@@ -25,7 +19,7 @@
             <template slot="title">
                 <div>
                     <span>Website Record</span>
-                    <a-button @click="changeFlag = !changeFlag" size="small" style="float: right" icon="setting"/>
+                    <a-button v-show="isLogged" @click="changeFlag = !changeFlag" size="small" style="float: right" icon="setting"/>
                 </div>
             </template>
             <a-list :data-source="websiteList">
@@ -35,7 +29,7 @@
                                       @click="openWebsite(item.websiteUrl, item.openTarget)">
                     </a-list-item-meta>
                     <a-button style="height: 22px;width: 22px" v-show="changeFlag" type="danger" size="small"
-                              icon="minus"/>
+                              icon="minus" @click="deleteWebsite(item.id)"/>
                 </a-list-item>
             </a-list>
             <a-button @click="websiteVisible = !websiteVisible" block v-show="changeFlag">
@@ -153,12 +147,33 @@
             onClose() {
                 this.visible = false;
             },
+            deleteWebsite(id) {
+                let that = this;
+                this.$confirm({
+                    title: 'Delete',
+                    content: 'Do you want to delete the website?',
+                    centered: true,
+                    onOk() {
+                        api.deleteWebSiteRecord(id).then(res => {
+                            if (res.isSuccess) {
+                                that.$message.success("Delete Success!");
+                                that.getWebsites();
+                            } else {
+                                that.$message.error(res.message);
+                            }
+                        })
+                    }
+                });
+            },
             onSubmit() {
                 this.$refs.ruleForm.validate(valid => {
                     if (valid) {
                         api.saveWebsiteRecord(this.websiteForm).then(res => {
                             if (res.isSuccess) {
-
+                                this.websiteVisible = false;
+                                this.$message.success(res.message);
+                                this.getWebsites();
+                                this.$refs.ruleForm.resetFields();
                             } else {
                                 this.$message.error(res.message);
                             }
@@ -176,6 +191,7 @@
                                 this.$message.success("Login Success!");
                                 this.isLogged = true;
                                 this.loginVisible = false;
+                                this.$refs.loginForm.resetFields();
                             } else {
                                 this.$message.error(res.message);
                             }
@@ -186,27 +202,36 @@
                 });
             },
             logout() {
+                let that = this;
                 this.$confirm({
                     title: 'Logout',
                     content: 'Do you want to logout?',
                     centered: true,
                     onOk() {
                         api.logout().then(res => {
-                            debugger
                             if (res.isSuccess) {
-                                this.$message.success("Logout Success!");
-                                this.isLogged = false;
+                                that.$message.success("Logout Success!");
+                                that.isLogged = false;
                             } else {
-                                this.$message.error(res.message);
+                                that.$message.error(res.message);
                             }
                         })
-                    },
-                    onCancel() {},
+                    }
                 });
+            },
+            checkUserInfo() {
+                api.getUserInfo().then(res => {
+                    if (res.isSuccess) {
+                        this.isLogged = true;
+                    } else {
+                        this.isLogged = false;
+                    }
+                })
             }
         },
         created() {
             this.getWebsites();
+            this.checkUserInfo();
         }
     }
 </script>

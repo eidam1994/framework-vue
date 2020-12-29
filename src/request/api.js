@@ -17,3 +17,8 @@ export const websiteRecordList = () => get('/public/v1/websites', {});
 export const saveWebsiteRecord = (params) => post('/v1/websites', params);
 
 export const deleteWebSiteRecord = (id) => deleteById('/v1/' + id + '/websites');
+
+/**
+ * 系统管理接口
+ */
+export const userList = () => get('/v1/users', {});
