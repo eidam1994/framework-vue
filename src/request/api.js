@@ -1,4 +1,4 @@
-import {deleteById, get, post} from './http'
+import {deleteById, get, post, put} from './http'
 
 /**
  * 用户操作
@@ -22,3 +22,5 @@ export const deleteWebSiteRecord = (id) => deleteById('/v1/' + id + '/websites')
  * 系统管理接口
  */
 export const userList = () => get('/v1/users', {});
+
+export const updatePassword = (params) => post('/v1/users/password', params);
