@@ -7,7 +7,7 @@
                 <a-menu-item key="1" @click="currentTabComponent = 'user'">
                     User Management
                 </a-menu-item>
-                <a-menu-item key="2">
+                <a-menu-item key="2" @click="currentTabComponent = 'role'">
                     Role Management
                 </a-menu-item>
                 <a-menu-item key="3">
@@ -58,7 +58,8 @@
         name: 'system',
         components: {
             "head-bar": HeadBar,
-            "user": () => import("@views/system/UserManagement")
+            "user": () => import("@views/system/authentication/UserManagement"),
+            "role": () => import("@views/system/authentication/RoleManagement")
         },
         data() {
             return {

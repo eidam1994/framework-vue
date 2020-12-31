@@ -8,7 +8,7 @@
             <template slot="extra">
                 <a-button type="link" icon="user" v-show="!isLogged" @click="loginVisible = !loginVisible"/>
                 <a-button type="link" icon="logout" v-show="isLogged" @click="logout"/>
-                <a-button type="link" icon="appstore"/>
+                <a-button type="link" icon="appstore" @click="$router.push('/system')"/>
             </template>
         </a-page-header>
         <a-drawer
